@@ -7,6 +7,7 @@
 6. [Public Resolver](#public-resolver)
 7. [Custom Resolver](#custom-resolver)
 8. [Onchain và offchain resolution](#onchain-và-offchain-resolution)
+9. [Tương tác với Resolver](#tương-tác-với-resolver)
 
 ## Định nghĩa:
 - ENS =  Ethereum Name Service. dựa trên Ethereum. mục tiêu giống như DNS của internet
@@ -97,3 +98,51 @@
 ## Onchain và offchain resolution:
 - Onchain resolution: dữ liệu được lưu trữ trực tiếp trên blockchain.
 - Offchain resolution: dữ liệu được lưu trữ ngoài blockchain, thông qua các contract resolver.
+
+## Tương tác với Resolver:
+1. Kiểm tra các interface được hỗ trợ:
+    ```solidity
+    function supportsInterface(bytes4 interfaceID) external pure returns (bool)
+    ```
+2. Cập nhật các record của người dùng:
+    - Ví dụ hàm setRecord() với ENSjs v3:
+    ```javascript
+    import { createWalletClient, custom } from 'viem'
+    import { mainnet } from 'viem/chains'
+    import { addEnsContracts } from '@ensdomains/ensjs'
+    import { setRecords } from '@ensdomains/ensjs/wallet'
+
+    const wallet = createWalletClient({
+        chain: addEnsContracts(mainnet),
+        transport: custom(window.ethereum),
+    })
+    const hash = await setRecords(wallet, {
+        name: 'ens.eth',
+        coins: [
+            {
+            coin: 'ETH',
+            value: '0xFe89cc7aBB2C4183683ab71653C4cdc9B02D44b7',
+            },
+        ],
+        texts: [{ key: 'foo', value: 'bar' }],
+        resolverAddress: '0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41',
+    })
+    ```
+3. Cập nhật Resolver của người dùng:
+- Sử dụng function setResolver() của contract ENSRegistry:
+    ```javascript
+    import { createWalletClient, custom } from 'viem'
+    import { mainnet } from 'viem/chains'
+    import { addEnsContracts } from '@ensdomains/ensjs'
+    import { setResolver } from '@ensdomains/ensjs/wallet'
+
+    const wallet = createWalletClient({
+        chain: addEnsContracts(mainnet),
+        transport: custom(window.ethereum),
+    })
+    const hash = await setResolver(wallet, {
+        name: 'ens.eth',
+        contract: 'registry',
+        resolverAddress: '0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41',
+    })
+    ```
