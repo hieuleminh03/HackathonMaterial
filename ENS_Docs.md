@@ -25,7 +25,10 @@
             ```javascript
             const addr = await resolver.addr("luc.eth");
             ```
-            
+
+## Quy trình xử lý tên miền:
+- Hầu hết các thư viện đã có các lớp xử lý. Khi làm dApp chưa cần quá quan tâm.
+- Đọc thêm tai [đây](https://docs.ens.domains/resolution/names) 
 
 ## Phân tích cụ thể các thành phần của ENS:
 	a. Registry: 
